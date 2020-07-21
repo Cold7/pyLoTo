@@ -4,9 +4,13 @@ from pyloto import RGD
 
 import networkx as nx
 from pandas import read_csv
-
+from numpy import random 
 df = read_csv("reference.tsv", header=None, sep="\t") #loading file
 G = nx.from_pandas_edgelist(df, 0, 1, create_using=nx.DiGraph()) #converting file list into a digraph
+for n in G.nodes:
+	weight = random.rand()*100
+	#for classical loto use weight = 1
+	G.nodes[n]["weight"] = weight
 
 #creating a pyloto object
 myLoTo =  pyloto(G, nproc = 4)
@@ -42,12 +46,14 @@ myLoTo =  pyloto(G, nproc = 4)
 #creating a segond loto object with a shuffled network to use REC and RGD
 df = read_csv("inferred.tsv", header=None, sep="\t") #loading file
 H = nx.from_pandas_edgelist(df, 0, 1, create_using=nx.DiGraph()) #converting file list into a digraph
-
-#it is not neccessary to create a pyloro object to get the REC
+for n in H.nodes:
+	weight = random.rand()*100
+	#for classical loto use weight = 1
+	H.nodes[n]["weight"] = weight
+#it is not neccessary to create a pyloTo object to get the REC
 #getting REC
 print("computing REC")
-global myREC
-myREC = REC(myLoTo, H, nproc = 4)
+myREC = REC(myLoTo, H, weight_1="weight",weight_2="weight",nproc = 4) #weight 1 and 2 are the name for the weight attribute for network 1 and 2
 #uncomment the following two lines to print rec for each graphlet
 #for rec in myREC:
 #	print(rec, myREC[rec])

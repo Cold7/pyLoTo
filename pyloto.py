@@ -48,15 +48,15 @@ def _parallel_REC(currentGraphlet):
 		while j < 3:
 			#net1
 			if netRef1.has_edge(currentGraphlet[i],currentGraphlet[j]):
-				net1[i][j] = 1
+				net1[i][j] = (netRef1.nodes[currentGraphlet[i]][weight_1_]-min_)/max_min
 			if netRef1.has_edge(currentGraphlet[j],currentGraphlet[i]):
-				net1[j][1] = 1
+				net1[j][i] = (netRef1.nodes[currentGraphlet[j]][weight_1_]-min_)/max_min
 			#net2
 			if netRef2.has_node(currentGraphlet[i]) and netRef2.has_node(currentGraphlet[j]):
 				if netRef2.has_edge(currentGraphlet[i],currentGraphlet[j]):
-					net2[i][j] = 1
+					net2[i][j] = (netRef2.nodes[currentGraphlet[i]][weight_2_]-min_)/max_min
 				if netRef2.has_edge(currentGraphlet[j],currentGraphlet[i]):
-					net2[j][i] = 1
+					net2[j][i] = (netRef2.nodes[currentGraphlet[j]][weight_2_]-min_)/max_min
 			j += 1
 	
 	#comparing both matrices
@@ -73,10 +73,28 @@ def _parallel_REC(currentGraphlet):
 #function that compute  the graphlet reconstruction rate
 #this function get two pyloto object and return a dict for graphlet and REC
 #to compare
-def REC(referenceLoTo, G, nproc = 1):
-	global netRef1, netRef2
+def REC(referenceLoTo, G, weight_1="weight",weight_2="weight",nproc = 1):
+	global netRef1, netRef2,weight_1_,weight_2_, max_min, min_
+
 	netRef1 = referenceLoTo.network
 	netRef2 = G
+	weight_1_ = weight_1
+	weight_2_ = weight_2
+
+	max_ = 0
+	min_ = 999999
+	for node in netRef1.nodes():
+		if netRef1.nodes[node][weight_1] > max_:
+			max_ = netRef1.nodes[node][weight_1]
+		if netRef1.nodes[node][weight_1] < min_:
+			min_ = netRef1.nodes[node][weight_1]
+	for node in netRef2.nodes():
+		if netRef2.nodes[node][weight_1] > max_:
+			max_ = netRef2.nodes[node][weight_1]
+		if netRef2.nodes[node][weight_1] < min_:
+			min_ = netRef2.nodes[node][weight_1]			
+	max_min = max_ - min_	
+
 	pool = mp.Pool(processes = nproc)
 	resultingREC = pool.map(_parallel_REC,referenceLoTo.graphlets[1]+referenceLoTo.graphlets[2]+referenceLoTo.graphlets[3]+referenceLoTo.graphlets[4]+referenceLoTo.graphlets[5]+referenceLoTo.graphlets[6]+referenceLoTo.graphlets[7]+referenceLoTo.graphlets[8]+referenceLoTo.graphlets[9]+referenceLoTo.graphlets[10]+referenceLoTo.graphlets[11]+referenceLoTo.graphlets[12]+referenceLoTo.graphlets[13], chunksize = 1)
 	REC_ = {}
