@@ -12,7 +12,6 @@ def _parallel_RGD(node):
 			total += 1
 	if total != 0: #faster to ask if node is acting in any graphlet
 		RGD_ /= total
-
 	return [node, RGD_]
 	
 #function that compute the REC graphlet degree based on a dict of graphlet:REC and a single node or a list of node.
@@ -73,26 +72,26 @@ def _parallel_REC(currentGraphlet):
 #function that compute  the graphlet reconstruction rate
 #this function get two pyloto object and return a dict for graphlet and REC
 #to compare
-def REC(referenceLoTo, G, weight_1="weight",weight_2="weight",nproc = 1):
-	global netRef1, netRef2,weight_1_,weight_2_, max_min, min_
+def REC(referenceLoTo, comparingLoTo, nproc = 1):
+	global netRef1, netRef2, max_min, min_, weight_1_, weight_2_
 
 	netRef1 = referenceLoTo.network
-	netRef2 = G
-	weight_1_ = weight_1
-	weight_2_ = weight_2
-
+	netRef2 = comparingLoTo.network
+	weight_1_ = referenceLoTo.weight_name
+	weight_2_ = comparingLoTo.weight_name
+	
 	max_ = 0
 	min_ = 999999
 	for node in netRef1.nodes():
-		if netRef1.nodes[node][weight_1] > max_:
-			max_ = netRef1.nodes[node][weight_1]
-		if netRef1.nodes[node][weight_1] < min_:
-			min_ = netRef1.nodes[node][weight_1]
+		if netRef1.nodes[node][weight_1_] > max_:
+			max_ = netRef1.nodes[node][weight_1_]
+		if netRef1.nodes[node][weight_1_] < min_:
+			min_ = netRef1.nodes[node][weight_1_]
 	for node in netRef2.nodes():
-		if netRef2.nodes[node][weight_1] > max_:
-			max_ = netRef2.nodes[node][weight_1]
-		if netRef2.nodes[node][weight_1] < min_:
-			min_ = netRef2.nodes[node][weight_1]			
+		if netRef2.nodes[node][weight_2_] > max_:
+			max_ = netRef2.nodes[node][weight_2_]
+		if netRef2.nodes[node][weight_2_] < min_:
+			min_ = netRef2.nodes[node][weight_2_]			
 	max_min = max_ - min_	
 
 	pool = mp.Pool(processes = nproc)
@@ -100,7 +99,6 @@ def REC(referenceLoTo, G, weight_1="weight",weight_2="weight",nproc = 1):
 	REC_ = {}
 	for data in resultingREC:
 		REC_[data[0]+","+data[1]+","+data[2]] = data[3]
-	
 	return REC_
 
 #private function to compute basic statics
@@ -181,18 +179,18 @@ def _graphlets(H, nproc):
 		node2 = data[1]
 		for graphletType in data[2]:
 			for node3 in data[2][graphletType]:
-				graphlets[graphletType].append([node1, node2,node3])
+				graphlets[graphletType].append([node1,node2,node3])
 	del G
 	del nodes
 	del pool
 	del graphlets_
 	return graphlets
-
 	
 class pyloto:
 	#constructor for the class
-	def __init__(self,G, nproc=1):
+	def __init__(self,G, weight="weight", nproc=1): #weight is the name for the attribute to use as weight
 		
+		self.weight_name = weight
 		#getting basic statics
 		_stats = _basicStats(G)
 		self.number_TFs = _stats[0]
@@ -238,9 +236,3 @@ class pyloto:
 				del count_
 				return True
 		return False
-			
-	
-
-		
-
-

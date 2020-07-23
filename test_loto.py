@@ -13,8 +13,7 @@ for n in G.nodes:
 	G.nodes[n]["weight"] = weight
 
 #creating a pyloto object
-myLoTo =  pyloto(G, nproc = 4)
-
+myLoTo =  pyloto(G, weight = "weight", nproc = 4)
 
 #######################################################################################################
 ##
@@ -49,22 +48,26 @@ H = nx.from_pandas_edgelist(df, 0, 1, create_using=nx.DiGraph()) #converting fil
 for n in H.nodes:
 	weight = random.rand()*100
 	#for classical loto use weight = 1
-	H.nodes[n]["weight"] = weight
-#it is not neccessary to create a pyloTo object to get the REC
+	H.nodes[n]["peso"] = weight
+	
+#creating a second pyloto object
+myLoTo2 =  pyloto(H, weight = "peso", nproc = 4)
+
 #getting REC
 print("computing REC")
-myREC = REC(myLoTo, H, weight_1="weight",weight_2="weight",nproc = 4) #weight 1 and 2 are the name for the weight attribute for network 1 and 2
+myREC = REC(myLoTo, myLoTo2,nproc = 4) #weight 1 and 2 are the name for the weight attribute for network 1 and 2
+
 #uncomment the following two lines to print rec for each graphlet
-#for rec in myREC:
-#	print(rec, myREC[rec])
+for rec in myREC:
+	print(rec, myREC[rec])
 	
 #computing RGD
 print("computing RGD for gadE")
 myRGD = RGD(myREC,"gadE",nproc = 4)
 print(myRGD)
 
-print("computing RGD for multiples nodes")
-myRGD = RGD(myREC,list(G.nodes),nproc = 4)#list to parse a list of string instead of nodeviews
-for node in myRGD:
-	print("RGD for node: ", node,"is",myRGD[node]) 
+#print("computing RGD for multiples nodes")
+#myRGD = RGD(myREC,list(G.nodes),nproc = 4)#list to parse a list of string instead of nodeviews
+#for node in myRGD:
+#	print("RGD for node: ", node,"is",myRGD[node]) 
 
