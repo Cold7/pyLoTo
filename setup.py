@@ -7,7 +7,7 @@ setup(
   author = 'J. Sebastian Contreras-Riquelme',
   author_email = 'contrerasriquelme.sebastian@gmail.com',
   url = 'https://github.com/Cold7/pyLoTo', # use the URL to the github repo
-  download_url = 'https://github.com/Cold7/pyloto/tarball/0.1',
+  download_url = 'https://github.com/Cold7/pyLoLo/tarball/0.2',
   keywords = ['graphlets', 'local topological comparison', 'networks'],
   classifiers = [],
 )
