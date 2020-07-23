@@ -1,0 +1,5 @@
+Terms of Use and Legal Notices.
+As LoTo is supplied without charge, by using it you agree that any warranty is excluded, regarding to functionality or fitness for purpose or otherwise.
+
+Commercial Users.
+If you are not an academic user, you should get a licence to use pyLoTo. Please send an E-mail to contrerasriquelme.sebastian@gmail.com including "pyLoTo" in the subject.
